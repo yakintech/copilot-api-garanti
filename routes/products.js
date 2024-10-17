@@ -1,53 +1,49 @@
-// routes/products.js
 const express = require('express');
 const router = express.Router();
-const Product = require('../models/product');
+const productController = require('../controllers/productController');
 
-// GET all products
-router.get('/', async (req, res) => {
-  try {
-    const products = await Product.find().populate('category');
-    res.json(products);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+/**
+ * @route GET /api/products
+ * @description Get all products
+ * @returns {Object} 200 - An array of products
+ * @returns {Error} 500 - Server error
+ */
+router.get('/', productController.getAllProducts);
 
-// POST a new product
-router.post('/', async (req, res) => {
-  const { name, price, category, stock } = req.body;
-  const product = new Product({
-    name,
-    price,
-    category,
-    stock
-  });
+/**
+ * @route POST /api/products
+ * @description Create a new product
+ * @param {string} name - The name of the product
+ * @param {number} price - The price of the product
+ * @param {string} category - The category ID of the product
+ * @param {number} stock - The stock quantity of the product
+ * @returns {Object} 201 - The created product
+ * @returns {Error} 400 - Bad request
+ */
+router.post('/', productController.createProduct);
 
-  try {
-    const newProduct = await product.save();
-    res.status(201).json(newProduct);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
+/**
+ * @route PATCH /api/products/:id
+ * @description Update a product
+ * @param {string} id - The ID of the product to update
+ * @param {string} [name] - The new name of the product
+ * @param {number} [price] - The new price of the product
+ * @param {string} [category] - The new category ID of the product
+ * @param {number} [stock] - The new stock quantity of the product
+ * @returns {Object} 200 - The updated product
+ * @returns {Error} 404 - Product not found
+ * @returns {Error} 500 - Server error
+ */
+router.patch('/:id', productController.updateProduct);
 
-// PATCH a product
-router.patch('/:id', async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.id);
-    if (!product) {
-      return res.status(404).json({ message: 'Product not found' });
-    }
-    const { name, price, category, stock } = req.body;
-    if (name) product.name = name;
-    if (price) product.price = price;
-    if (category) product.category = category;
-    if (stock !== undefined) product.stock = stock;
-    await product.save();
-    res.json(product);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+/**
+ * @route DELETE /api/products/:id
+ * @description Delete a product
+ * @param {string} id - The ID of the product to delete
+ * @returns {Object} 200 - The deleted product
+ * @returns {Error} 404 - Product not found
+ * @returns {Error} 500 - Server error
+ */
+router.delete('/:id', productController.deleteProduct);
 
 module.exports = router;

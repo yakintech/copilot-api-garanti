@@ -1,60 +1,43 @@
-// routes/categories.js
 const express = require('express');
 const router = express.Router();
-const Category = require('../models/category');
+const categoryController = require('../controllers/categoryController');
 
-// GET all categories
-router.get('/', async (req, res) => {
-  try {
-    const categories = await Category.find();
-    res.json(categories);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
+/**
+ * @route GET /api/categories
+ * @description Get all categories
+ * @returns {Object} 200 - An array of categories
+ * @returns {Error} 500 - Server error
+ */
+router.get('/', categoryController.getAllCategories);
 
-// POST a new category
-router.post('/', async (req, res) => {
-  const category = new Category({
-    name: req.body.name
-  });
+/**
+ * @route POST /api/categories
+ * @description Create a new category
+ * @param {string} name - The name of the category
+ * @returns {Object} 201 - The created category
+ * @returns {Error} 400 - Bad request
+ */
+router.post('/', categoryController.createCategory);
 
-  try {
-    const newCategory = await category.save();
-    res.status(201).json(newCategory);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
+/**
+ * @route PATCH /api/categories/:id
+ * @description Update a category
+ * @param {string} id - The ID of the category to update
+ * @param {string} [name] - The new name of the category
+ * @returns {Object} 200 - The updated category
+ * @returns {Error} 404 - Category not found
+ * @returns {Error} 500 - Server error
+ */
+router.patch('/:id', categoryController.updateCategory);
 
-// GET a category by id
-router.get('/:id', (req, res) => {
-  res.json(res.category);
-});
-
-// Update a category by id
-router.patch('/:id', async (req, res) => {
-  if (req.body.name != null) {
-    res.category.name = req.body.name;
-  }
-
-  try {
-    const updatedCategory = await res.category.save();
-    res.json(updatedCategory);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
-
-// Delete a category by id
-router.delete('/:id', async (req, res) => {
-  try {
-    await res.category.remove();
-    res.json({ message: 'Category deleted' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
-
+/**
+ * @route DELETE /api/categories/:id
+ * @description Delete a category
+ * @param {string} id - The ID of the category to delete
+ * @returns {Object} 200 - The deleted category
+ * @returns {Error} 404 - Category not found
+ * @returns {Error} 500 - Server error
+ */
+router.delete('/:id', categoryController.deleteCategory);
 
 module.exports = router;
