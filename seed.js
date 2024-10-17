@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const Product = require('./models/product');
 const Category = require('./models/category');
 const City = require('./models/city');
+const cities = require('./data/cities');
 
 require('dotenv').config();
 
@@ -18,95 +19,29 @@ const categories = [
   { name: 'Clothing' }
 ];
 
-const cities = [
-  { name: 'Adana' },
-  { name: 'Adıyaman' },
-  { name: 'Afyonkarahisar' },
-  { name: 'Ağrı' },
-  { name: 'Amasya' },
-  { name: 'Ankara' },
-  { name: 'Antalya' },
-  { name: 'Artvin' },
-  { name: 'Aydın' },
-  { name: 'Balıkesir' },
-  { name: 'Bilecik' },
-  { name: 'Bingöl' },
-  { name: 'Bitlis' },
-  { name: 'Bolu' },
-  { name: 'Burdur' },
-  { name: 'Bursa' },
-  { name: 'Çanakkale' },
-  { name: 'Çankırı' },
-  { name: 'Çorum' },
-  { name: 'Denizli' },
-  { name: 'Diyarbakır' },
-  { name: 'Edirne' },
-  { name: 'Elazığ' },
-  { name: 'Erzincan' },
-  { name: 'Erzurum' },
-  { name: 'Eskişehir' },
-  { name: 'Gaziantep' },
-  { name: 'Giresun' },
-  { name: 'Gümüşhane' },
-  { name: 'Hakkari' },
-  { name: 'Hatay' },
-  { name: 'Isparta' },
-  { name: 'Mersin' },
-  { name: 'İstanbul' },
-  { name: 'İzmir' },
-  { name: 'Kars' },
-  { name: 'Kastamonu' },
-  { name: 'Kayseri' },
-  { name: 'Kırklareli' },
-  { name: 'Kırşehir' },
-  { name: 'Kocaeli' },
-  { name: 'Konya' },
-  { name: 'Kütahya' },
-  { name: 'Malatya' },
-  { name: 'Manisa' },
-  { name: 'Kahramanmaraş' },
-  { name: 'Mardin' },
-  { name: 'Muğla' },
-  { name: 'Muş' },
-  { name: 'Nevşehir' },
-  { name: 'Niğde' },
-  { name: 'Ordu' },
-  { name: 'Rize' },
-  { name: 'Sakarya' },
-  { name: 'Samsun' },
-  { name: 'Siirt' },
-  { name: 'Sinop' },
-  { name: 'Sivas' },
-  { name: 'Tekirdağ' },
-  { name: 'Tokat' },
-  { name: 'Trabzon' },
-  { name: 'Tunceli' },
-  { name: 'Şanlıurfa' },
-  { name: 'Uşak' },
-  { name: 'Van' },
-  { name: 'Yozgat' },
-  { name: 'Zonguldak' },
-  { name: 'Aksaray' },
-  { name: 'Bayburt' },
-  { name: 'Karaman' },
-  { name: 'Kırıkkale' },
-  { name: 'Batman' },
-  { name: 'Şırnak' },
-  { name: 'Bartın' },
-  { name: 'Ardahan' },
-  { name: 'Iğdır' },
-  { name: 'Yalova' },
-  { name: 'Karabük' },
-  { name: 'Kilis' },
-  { name: 'Osmaniye' },
-  { name: 'Düzce' }
-];
+
 
 const products = [
   { name: 'Laptop', price: 999.99, category: null, stock: 50 },
   { name: 'Smartphone', price: 699.99, category: null, stock: 100 },
   { name: 'Novel', price: 19.99, category: null, stock: 200 },
-  { name: 'T-Shirt', price: 9.99, category: null, stock: 300 }
+  { name: 'T-Shirt', price: 9.99, category: null, stock: 300 },
+  { name: 'Headphones', price: 49.99, category: null, stock: 150 },
+  { name: 'Keyboard', price: 29.99, category: null, stock: 80 },
+  { name: 'Mouse', price: 19.99, category: null, stock: 120 },
+  { name: 'Monitor', price: 199.99, category: null, stock: 60 },
+  { name: 'Tablet', price: 299.99, category: null, stock: 90 },
+  { name: 'Charger', price: 14.99, category: null, stock: 200 },
+  { name: 'Backpack', price: 39.99, category: null, stock: 70 },
+  { name: 'Shoes', price: 59.99, category: null, stock: 110 },
+  { name: 'Watch', price: 89.99, category: null, stock: 130 },
+  { name: 'Camera', price: 499.99, category: null, stock: 40 },
+  { name: 'Printer', price: 149.99, category: null, stock: 50 },
+  { name: 'Desk Lamp', price: 24.99, category: null, stock: 100 },
+  { name: 'Notebook', price: 4.99, category: null, stock: 300 },
+  { name: 'Pen', price: 1.99, category: null, stock: 500 },
+  { name: 'Water Bottle', price: 9.99, category: null, stock: 150 },
+  { name: 'Sunglasses', price: 79.99, category: null, stock: 90 }
 ];
 
 // Seed Function
@@ -120,6 +55,22 @@ async function seedDB() {
   products[1].category = createdCategories[0]._id;
   products[2].category = createdCategories[1]._id;
   products[3].category = createdCategories[2]._id;
+  products[4].category = createdCategories[0]._id;
+  products[5].category = createdCategories[0]._id;
+  products[6].category = createdCategories[0]._id;
+  products[7].category = createdCategories[0]._id;
+  products[8].category = createdCategories[0]._id;
+  products[9].category = createdCategories[0]._id;
+  products[10].category = createdCategories[2]._id;
+  products[11].category = createdCategories[2]._id;
+  products[12].category = createdCategories[2]._id;
+  products[13].category = createdCategories[0]._id;
+  products[14].category = createdCategories[0]._id;
+  products[15].category = createdCategories[0]._id;
+  products[16].category = createdCategories[1]._id;
+  products[17].category = createdCategories[1]._id;
+  products[18].category = createdCategories[0]._id;
+  products[19].category = createdCategories[2]._id;
 
   await Product.insertMany(products);
   await City.insertMany(cities);

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        .slideshow-container {
+            position: relative;
+            max-width: 100%;
+            margin: auto;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #333;
+            color: #fff;
+        }
+        .slide {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        .slide img {
+            width: 100%;
+            border-radius: 8px;
+        }
+        .slide h3 {
+            margin: 10px 0;
+            font-size: 18px;
+        }
+        .slide p {
+            margin: 5px 0;
+            color: #ddd;
+        }
+        .slide .price {
+            font-size: 16px;
+            color: #007bff;
+            font-weight: bold;
+        }
+        .prev, .next {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            width: auto;
+            padding: 16px;
+            margin-top: -22px;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            transition: 0.6s ease;
+            border-radius: 0 3px 3px 0;
+            user-select: none;
+        }
+        .next {
+            right: 0;
+            border-radius: 3px 0 0 3px;
+        }
+        .prev:hover, .next:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        .search-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .search-container input {
+            padding: 10px;
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .products-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .product-box {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 200px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .product-box h3 {
+            margin: 0 0 10px;
+            font-size: 18px;
+        }
+        .product-box p {
+            margin: 5px 0;
+            color: #555;
+        }
+        .product-box .price {
+            font-size: 16px;
+            color: #007bff;
+            font-weight: bold;
+        }
+        .product-box .price-with-vat {
+            font-size: 14px;
+            color: #ff5733;
+            font-weight: bold;
+        }
+        .product-count {
+            text-align: center;
+            margin: 10px 0;
+            font-size: 16px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Products</h1>
+    <div class="slideshow-container" id="slideshow-container">
+        <button class="prev" onclick="plusSlides(-1)">&#10094;</button>
+        <button class="next" onclick="plusSlides(1)">&#10095;</button>
+    </div>
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Search by name" oninput="filterProducts()">
+    </div>
+    <div class="product-count" id="product-count">0 products found</div>
+    <div id="products-container" class="products-container"></div>
+
+    <script>
+        let slideIndex = 0;
+        let allProducts = [];
+
+        async function fetchProducts() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('You are not logged in!');
+                return;
+            }
+
+            const response = await fetch('http://localhost:3000/api/products', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                const products = await response.json();
+                allProducts = products;
+                displaySlideshow(products.slice(0, 5));
+                displayProducts(products.slice(5));
+            } else {
+                alert('Failed to fetch products!');
+            }
+        }
+
+        function displaySlideshow(products) {
+            const slideshowContainer = document.getElementById('slideshow-container');
+            slideshowContainer.innerHTML = `
+                <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+                <a class="next" onclick="plusSlides(1)">&#10095;</a>
+            `;
+
+            products.forEach((product, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'slide';
+
+                const productName = document.createElement('h3');
+                productName.textContent = product.name;
+
+                const productPrice = document.createElement('p');
+                productPrice.className = 'price';
+                productPrice.textContent = `${product.price.toFixed(2)} TL`;
+
+                const productPriceWithVAT = document.createElement('p');
+                productPriceWithVAT.className = 'price-with-vat';
+                productPriceWithVAT.textContent = `KDV Dahil: ${(product.price * 1.2).toFixed(2)} TL`;
+
+                const productCategory = document.createElement('p');
+                productCategory.textContent = `Category: ${product.category ? product.category.name : 'N/A'}`;
+
+                const productStock = document.createElement('p');
+                productStock.textContent = `Stock: ${product.stock}`;
+
+                slide.appendChild(productName);
+                slide.appendChild(productPrice);
+                slide.appendChild(productPriceWithVAT);
+                slide.appendChild(productCategory);
+                slide.appendChild(productStock);
+
+                slideshowContainer.appendChild(slide);
+            });
+
+            showSlides(slideIndex);
+        }
+
+        function plusSlides(n) {
+            showSlides(slideIndex += n);
+        }
+
+        function showSlides(n) {
+            const slides = document.getElementsByClassName('slide');
+            if (n >= slides.length) { slideIndex = 0; }
+            if (n < 0) { slideIndex = slides.length - 1; }
+            for (let i = 0; i < slides.length; i++) {
+                slides[i].style.display = 'none';
+            }
+            slides[slideIndex].style.display = 'block';
+        }
+
+        function displayProducts(products) {
+            const productsContainer = document.getElementById('products-container');
+            productsContainer.innerHTML = '';
+
+            products.forEach(product => {
+                const productBox = document.createElement('div');
+                productBox.className = 'product-box';
+
+                const productName = document.createElement('h3');
+                productName.textContent = product.name;
+
+                const productPrice = document.createElement('p');
+                productPrice.className = 'price';
+                productPrice.textContent = `${product.price.toFixed(2)} TL`;
+
+                const productPriceWithVAT = document.createElement('p');
+                productPriceWithVAT.className = 'price-with-vat';
+                productPriceWithVAT.textContent = `KDV Dahil: ${(product.price * 1.2).toFixed(2)} TL`;
+
+                const productCategory = document.createElement('p');
+                productCategory.textContent = `Category: ${product.category ? product.category.name : 'N/A'}`;
+
+                const productStock = document.createElement('p');
+                productStock.textContent = `Stock: ${product.stock}`;
+
+                productBox.appendChild(productName);
+                productBox.appendChild(productPrice);
+                productBox.appendChild(productPriceWithVAT);
+                productBox.appendChild(productCategory);
+                productBox.appendChild(productStock);
+
+                productsContainer.appendChild(productBox);
+            });
+
+            const productCountText = products.length === 1 ? 'product found' : 'products found';
+            document.getElementById('product-count').textContent = `${products.length} ${productCountText}`;
+        }
+
+        function filterProducts() {
+            const searchInput = document.getElementById('search-input').value.toLowerCase();
+            const filteredProducts = allProducts.filter(product => product.name.toLowerCase().includes(searchInput));
+            displayProducts(filteredProducts);
+        }
+
+        // Sayfa yüklendiğinde ürünleri getir
+        window.onload = fetchProducts;
+    </script>
+</body>
+</html>
