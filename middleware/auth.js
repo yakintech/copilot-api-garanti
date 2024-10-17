@@ -1,20 +1,28 @@
-// middleware/auth.js
-const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const path = require('path');
 
-function auth(req, res, next) {
-  const authHeader = req.header('Authorization');
-  if (!authHeader) {
-    return res.status(401).json({ message: 'No token, authorization denied' });
+// Dosya yükleme ayarları
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/');
+  },
+  filename: function (req, file, cb) {
+    cb(null, `${Date.now()}-${file.originalname}`);
   }
+});
 
-  const token = authHeader.replace('Bearer ', '');
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (err) {
-    res.status(401).json({ message: 'Token is not valid' });
+const fileFilter = (req, file, cb) => {
+  // Sadece .jpg uzantılı dosyalara izin ver
+  if (file.mimetype === 'image/jpg') {
+    cb(null, true);
+  } else {
+    cb(new Error('Only .jpeg format allowed!'), false);
   }
-}
+};
 
-module.exports = auth;
+const upload = multer({
+  storage: storage,
+  fileFilter: fileFilter
+});
+
+module.exports = upload;
