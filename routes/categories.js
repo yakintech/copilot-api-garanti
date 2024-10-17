@@ -27,4 +27,34 @@ router.post('/', async (req, res) => {
   }
 });
 
+// GET a category by id
+router.get('/:id', (req, res) => {
+  res.json(res.category);
+});
+
+// Update a category by id
+router.patch('/:id', async (req, res) => {
+  if (req.body.name != null) {
+    res.category.name = req.body.name;
+  }
+
+  try {
+    const updatedCategory = await res.category.save();
+    res.json(updatedCategory);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// Delete a category by id
+router.delete('/:id', async (req, res) => {
+  try {
+    await res.category.remove();
+    res.json({ message: 'Category deleted' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
 module.exports = router;

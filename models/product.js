@@ -13,6 +13,11 @@ const ProductSchema = new mongoose.Schema({
   category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Category'
+  },
+  stock: {
+    type: Number,
+    required: true,
+    default: 0
   }
 }, {
   timestamps: true

@@ -4,7 +4,7 @@ const Product = require('./models/product');
 const Category = require('./models/category');
 
 // MongoDB Connection
-mongoose.connect('mongodb+srv://techcareer_swift:qSJrSgUN9qfgs0Fa@cluster0.jcus0vv.mongodb.net/garanti-copilot-db')
+mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('MongoDB connected...'))
   .catch(err => console.log(err));
 
@@ -16,10 +16,10 @@ const categories = [
 ];
 
 const products = [
-  { name: 'Laptop', price: 999.99, category: null },
-  { name: 'Smartphone', price: 699.99, category: null },
-  { name: 'Novel', price: 19.99, category: null },
-  { name: 'T-Shirt', price: 9.99, category: null }
+  { name: 'Laptop', price: 999.99, category: null, stock: 50 },
+  { name: 'Smartphone', price: 699.99, category: null, stock: 100 },
+  { name: 'Novel', price: 19.99, category: null, stock: 200 },
+  { name: 'T-Shirt', price: 9.99, category: null, stock: 300 }
 ];
 
 // Seed Function
