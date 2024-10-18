@@ -1,0 +1,41 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    transition: background-color 0.3s;
+  }
+  canvas {
+    border: 1px solid #000;
+    background-color: #fff;
+  }
+  .game-container {
+    text-align: center;
+    position: relative;
+  }
+  .score, .high-score {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  .controls {
+    margin-top: 10px;
+  }
+  .controls button {
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .difficulty {
+    margin-top: 10px;
+  }
+  .difficulty label {
+    font-size: 16px;
+  }
+  .difficulty select {
+    padding: 5px;
+    font-size: 16px;
+  }

@@ -46,4 +46,17 @@ router.patch('/:id', productController.updateProduct);
  */
 router.delete('/:id', productController.deleteProduct);
 
+
+
+/**
+ * @route GET /api/products/:id
+ * @description Get a product by ID
+ * @param {string} id - The ID of the product
+ * @returns {Object} 200 - The product
+ * @returns {Error} 404 - Product not found
+ * @returns {Error} 500 - Server error
+ * @security bearerAuth
+ *  */ 
+router.get('/:id', productController.getProductById);
+
 module.exports = router;

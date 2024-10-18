@@ -90,6 +90,11 @@
             width: 200px;
             box-sizing: border-box;
             text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .product-box:hover {
+            transform: scale(1.05);
         }
         .product-box h3 {
             margin: 0 0 10px;
@@ -219,6 +224,9 @@
             products.forEach(product => {
                 const productBox = document.createElement('div');
                 productBox.className = 'product-box';
+                productBox.onclick = () => {
+                    window.location.href = `productDetail.html?id=${product._id}`;
+                };
 
                 const productName = document.createElement('h3');
                 productName.textContent = product.name;

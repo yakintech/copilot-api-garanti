@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Detail</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .product-detail-container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+    .product-detail-container h2 {
+      margin-bottom: 20px;
+    }
+    .product-detail-container p {
+      margin: 10px 0;
+      color: #555;
+    }
+    .product-detail-container .price {
+      font-size: 18px;
+      color: #007bff;
+      font-weight: bold;
+    }
+    .product-detail-container .price-with-vat {
+      font-size: 16px;
+      color: #ff5733;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="product-detail-container" id="product-detail-container">
+    <h2>Product Detail</h2>
+    <p>Loading...</p>
+  </div>
+
+  <script>
+    async function fetchProductDetail(productId) {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('You are not logged in!');
+        return;
+      }
+
+      const response = await fetch(`http://localhost:3000/api/products/${productId}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const product = await response.json();
+        displayProductDetail(product);
+      } else {
+        alert('Failed to fetch product details!');
+      }
+    }
+
+    function displayProductDetail(product) {
+      const productDetailContainer = document.getElementById('product-detail-container');
+      productDetailContainer.innerHTML = `
+        <h2>${product.name}</h2>
+        <p class="price">${product.price.toFixed(2)} TL</p>
+        <p class="price-with-vat">KDV Dahil: ${(product.price * 1.2).toFixed(2)} TL</p>
+        <p>Category: ${product.category ? product.category.name : 'N/A'}</p>
+        <p>Stock: ${product.stock}</p>
+        <p>Description: ${product.description || 'No description available.'}</p>
+      `;
+    }
+
+    function getQueryStringParameter(name) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
+    }
+
+    // Sayfa yüklendiğinde ürün detaylarını getir
+    window.onload = () => {
+      const productId = getQueryStringParameter('id');
+      if (productId) {
+        fetchProductDetail(productId);
+      } else {
+        alert('No product ID provided!');
+      }
+    };
+  </script>
+</body>
+</html>

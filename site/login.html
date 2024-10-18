@@ -88,10 +88,15 @@
         const data = await response.json();
         localStorage.setItem('token', data.token);
         alert('Login successful!');
+        window.location.href = '/site/products.html';
       } else {
         errorMessage.textContent = 'Login failed!';
       }
     }
+
+    //default username cagatay ve password 123 olarka inputlar dolsun
+    document.getElementById('username').value = 'cagatay';
+    document.getElementById('password').value = '123';
   </script>
 </body>
 </html>
