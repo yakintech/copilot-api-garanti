@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orders</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+    }
+    .orders-container {
+      max-width: 800px;
+      margin: auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .order {
+      border-bottom: 1px solid #ccc;
+      padding: 10px 0;
+    }
+    .order:last-child {
+      border-bottom: none;
+    }
+    .order h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+    .order p {
+      margin: 5px 0;
+      color: #555;
+    }
+    .order .total-amount {
+      font-size: 16px;
+      color: #007bff;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>My Orders</h1>
+  <div class="orders-container" id="orders-container">
+    <!-- Orders will be displayed here -->
+  </div>
+
+  <script>
+    async function fetchOrders() {
+      const userId = localStorage.getItem('userId');
+      const token = localStorage.getItem('token');
+      if (!userId || !token) {
+        alert('You are not logged in!');
+        return;
+      }
+
+      const response = await fetch(`http://localhost:3000/api/orders/user/${userId}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const orders = await response.json();
+        displayOrders(orders);
+      } else {
+        alert('Failed to fetch orders!');
+      }
+    }
+
+    function displayOrders(orders) {
+      const ordersContainer = document.getElementById('orders-container');
+      ordersContainer.innerHTML = '';
+
+      orders.forEach(order => {
+        const orderDiv = document.createElement('div');
+        orderDiv.className = 'order';
+
+        const orderTitle = document.createElement('h3');
+        orderTitle.textContent = `Order ID: ${order._id}`;
+
+        const orderDate = document.createElement('p');
+        orderDate.textContent = `Date: ${new Date(order.createdAt).toLocaleDateString()}`;
+
+        const orderStatus = document.createElement('p');
+        orderStatus.textContent = `Status: ${order.status}`;
+
+        const orderTotal = document.createElement('p');
+        orderTotal.className = 'total-amount';
+        orderTotal.textContent = `Total Amount: ${order.totalAmount.toFixed(2)} TL`;
+
+        const productsList = document.createElement('ul');
+        order.products.forEach(item => {
+          const productItem = document.createElement('li');
+          productItem.textContent = `${item.product.name} x ${item.quantity}`;
+          productsList.appendChild(productItem);
+        });
+
+        orderDiv.appendChild(orderTitle);
+        orderDiv.appendChild(orderDate);
+        orderDiv.appendChild(orderStatus);
+        orderDiv.appendChild(orderTotal);
+        orderDiv.appendChild(productsList);
+
+        ordersContainer.appendChild(orderDiv);
+      });
+    }
+
+    // Sayfa yüklendiğinde siparişleri getir
+    window.onload = fetchOrders;
+  </script>
+</body>
+</html>

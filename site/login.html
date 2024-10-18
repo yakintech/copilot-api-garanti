@@ -87,6 +87,7 @@
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem('token', data.token);
+        localStorage.setItem('userId', data.userId);
         alert('Login successful!');
         window.location.href = '/site/products.html';
       } else {
@@ -94,7 +95,7 @@
       }
     }
 
-    //default username cagatay ve password 123 olarka inputlar dolsun
+    // Default username ve password ile inputları doldur
     document.getElementById('username').value = 'cagatay';
     document.getElementById('password').value = '123';
   </script>
